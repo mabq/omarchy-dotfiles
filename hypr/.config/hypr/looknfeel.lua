@@ -2,11 +2,12 @@
 
 hl.config {
   general = {
-    gaps_out = 4,
+    gaps_out = 3,
+    gaps_in = 2,
     layout = "scrolling",
   },
 
   decoration = {
-    rounding = 10,
+    rounding = 0,
   },
 }
