@@ -1,7 +1,7 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    dependencies = { "saghen/blink.cmp" },
+    dependencies = { "saghen/blink.cmp", "b0o/schemastore.nvim" },
     config = function()
       -- Configure LSPs:
       --
@@ -21,6 +21,19 @@ return {
       local servers = {
         -- Bash (bashls requires `bash-language-server`)
         bashls = {},
+
+        -- JSON (jsonls requires `vscode-json-language-server`, install it with
+        -- nix or with mise `mise use -g npm:vscode-langservers-extracted@latest`)
+        jsonls = {
+          settings = {
+            json = {
+              -- Inject all schemas from SchemaStore
+              schemas = require("schemastore").json.schemas(),
+              -- Enable validation (strongly recommended)
+              validate = { enable = true },
+            },
+          },
+        },
 
         -- Lua (lua_ls requires `lua-language-server`)
         lua_ls = {

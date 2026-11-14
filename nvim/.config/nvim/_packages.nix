@@ -17,6 +17,8 @@ pkgs: with pkgs; [
   bash-language-server # Language server for Bash
   shfmt # Shell parser and formatter
 
+  vscode-langservers-extracted # JSON/CSS/HTML language servers (vscode-json-language-server for json validation schemas)
+
   lua-language-server # Language server that offers Lua language support
   stylua # Opinionated Lua code formatter
   # luajit # High-performance JIT compiler for Lua 5.1
