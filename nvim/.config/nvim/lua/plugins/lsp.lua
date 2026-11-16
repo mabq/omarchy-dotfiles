@@ -1,29 +1,34 @@
+-- README
+--
+--  LSP servers must be installed — use the system package manager or tools
+--  like Mise, Mason, npm or anything else you want.
+--
+--  If you don't know where to find an LSP for a given language check the
+--  instructions provided for that specific LSP in `:h lspconfig-all`.
+--
+--  Ensure that the LSP is executable from the command line with `:echo executable("<lsp-command>")`.
+--  E.g. `:echo executable("lua-language-server")` for lua_ls.
+
 return {
   {
     "neovim/nvim-lspconfig",
-    dependencies = { "saghen/blink.cmp", "b0o/schemastore.nvim" },
+    dependencies = {
+      "saghen/blink.cmp", -- lsp completion
+      "b0o/schemastore.nvim", -- schema store
+    },
     config = function()
-      -- Configure LSPs:
-      --
-      --   LSPs must be installed by the neovim nix module.
-      --
-      --   These customized configurations will be merged with the ones
-      --   provided by nvim-lspconfig. Pass an emtpy table `{}` to use the
-      --   default config.
-      --
-      --   Use `:h lspconfig-all` to search the configuration of the desired
-      --   LSP.
-      --
-      --   Make sure the command described in the configuration is available in
-      --   the system with `:echo executable(<command>)`. For example, the
-      --   `lua_ls` configuration expects to find the `lua-language-server`
-      --   command.
       local servers = {
-        -- Bash (bashls requires `bash-language-server`)
+        -- This is the list of LSP servers to enable and their configs, pass an
+        -- emtpy table `{}` to use the default configuration.
+        --
+        -- These customized configurations will be merged with the ones
+        -- provided by nvim-lspconfig. Pass an emtpy table `{}` to use the
+        -- default config. See `:h lspconfig-all`.
+
+        -- Bash (requires `bash-language-server`)
         bashls = {},
 
-        -- JSON (jsonls requires `vscode-json-language-server`, install it with
-        -- nix or with mise `mise use -g npm:vscode-langservers-extracted@latest`)
+        -- JSON (requires `vscode-json-language-server`)
         jsonls = {
           settings = {
             json = {
@@ -34,6 +39,8 @@ return {
             },
           },
         },
+
+        mise = {},
 
         -- Lua (lua_ls requires `lua-language-server`)
         lua_ls = {
