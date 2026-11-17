@@ -13,8 +13,13 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "saghen/blink.cmp", -- lsp completion
-      "b0o/schemastore.nvim", -- schema store
+      "saghen/blink.cmp",
+
+      -- JSON Schema is the contract (the blueprint): It defines what a
+      -- configuration document is allowed to contain—what keys are valid, what
+      -- data types they expect (string, array, boolean), which fields are
+      -- required, and what descriptions/documentation go with each field.
+      "b0o/schemastore.nvim",
     },
     config = function()
       local servers = {
