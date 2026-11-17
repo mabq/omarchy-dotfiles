@@ -15,10 +15,12 @@ return {
     dependencies = {
       "saghen/blink.cmp",
 
-      -- JSON Schema is the contract (the blueprint): It defines what a
-      -- configuration document is allowed to contain—what keys are valid, what
-      -- data types they expect (string, array, boolean), which fields are
-      -- required, and what descriptions/documentation go with each field.
+      -- A Neovim plugin that provides the SchemaStore catalog for use with
+      -- jsonls and yamlls — if a programming language's LSP gives you
+      -- intelligent code intelligence based on an AST (Abstract Syntax Tree)
+      -- and type checker, a json/yaml schema gives an LSP the exact same
+      -- superpower for a static configuration file. It turns a plain text file
+      -- into a strongly-typed, self-documenting document.
       "b0o/schemastore.nvim",
     },
     config = function()
@@ -45,6 +47,7 @@ return {
           },
         },
 
+        -- Mise's LSP is built into the mise binary
         mise = {},
 
         -- Lua (lua_ls requires `lua-language-server`)
