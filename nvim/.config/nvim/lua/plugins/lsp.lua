@@ -1,13 +1,15 @@
--- README
+--  LSP servers are installed and managed by Mason (see `lua/plugins/mason.lua`),
+--  so this configuration does not depend on the system package manager.
 --
---  LSP servers must be installed — use the system package manager or tools
---  like Mise, Mason, npm or anything else you want.
+--  A few servers are not available in the Mason registry (`mise` and `nixd`).
+--  Install those with whatever tool manages them on your machine (Nix, mise,
+--  system package manager, ...) — they are enabled only when found in PATH.
 --
 --  If you don't know where to find an LSP for a given language check the
 --  instructions provided for that specific LSP in `:h lspconfig-all`.
 --
---  Ensure that the LSP is executable from the command line with `:echo executable("<lsp-command>")`.
---  E.g. `:echo executable("lua-language-server")` for lua_ls.
+--  Mason adds its `bin/` directory to Neovim's PATH. Verify a server is available with
+--  `:echo executable("<lsp-command>")`, e.g. `:echo executable("lua-language-server")` for lua_ls.
 
 return {
   {
@@ -24,18 +26,20 @@ return {
       "b0o/schemastore.nvim",
     },
     config = function()
-      local servers = {
-        -- This is the list of LSP servers to enable and their configs, pass an
-        -- emtpy table `{}` to use the default configuration.
-        --
-        -- These customized configurations will be merged with the ones
-        -- provided by nvim-lspconfig. Pass an emtpy table `{}` to use the
-        -- default config. See `:h lspconfig-all`.
+      --------------------------------------------------------------------------
+      -- This is the list of LSP servers to enable and their configs, pass an
+      -- emtpy table `{}` to use the default configuration.
+      --
+      -- These customized configurations will be merged with the ones
+      -- provided by nvim-lspconfig. Pass an emtpy table `{}` to use the
+      -- default config. See `:h lspconfig-all`.
 
-        -- Bash (requires `bash-language-server`)
+      local servers = {
+
+        -- Bash (installed by Mason: `bash-language-server`, `shellcheck` and `shfmt`)
         bashls = {},
 
-        -- JSON (requires `vscode-json-language-server`)
+        -- JSON (installed by Mason: `vscode-json-language-server`)
         jsonls = {
           settings = {
             json = {
@@ -47,10 +51,10 @@ return {
           },
         },
 
-        -- Mise's LSP is built into the mise binary
+        -- Mise's LSP is built into the mise binary (not available in Mason)
         mise = {},
 
-        -- Lua (lua_ls requires `lua-language-server`)
+        -- Lua (installed by Mason: `lua-language-server`)
         lua_ls = {
           on_init = function(client)
             if client.workspace_folders then
@@ -95,7 +99,8 @@ return {
           },
         },
 
-        -- Nix (nixd, watch https://www.youtube.com/watch?v=M_zMoHlbZBY)
+        -- Nix (nixd is not available in Mason, install it separately)
+        -- Watch https://www.youtube.com/watch?v=M_zMoHlbZBY
         nixd = {
           cmd = { "nixd" },
           settings = {
@@ -116,12 +121,30 @@ return {
         },
       }
 
-      -- Configure and enable
+      --------------------------------------------------------------------------
+
+      -- Register the config for every server. This does not start the server;
+      -- a server starts only after it is enabled.
       for name, config in pairs(servers) do
         config.capabilities = require("blink.cmp").get_lsp_capabilities(config.capabilities) -- add LSP capabilities provided by Blink
         vim.lsp.config(name, config)
-        vim.lsp.enable(name)
       end
+
+      -- mason-lspconfig enables every server installed by Mason automatically.
+      -- Servers that are not in the Mason registry must be installed by other
+      -- means, so enable them only when their executable exists in PATH.
+      local external_servers = {
+        mise = "mise",
+        nixd = "nixd",
+      }
+
+      for name, executable in pairs(external_servers) do
+        if vim.fn.executable(executable) == 1 then
+          vim.lsp.enable(name)
+        end
+      end
+
+      --------------------------------------------------------------------------
 
       -- Add keymaps to the buffer when an LSP is attached
       vim.api.nvim_create_autocmd("LspAttach", {
@@ -177,12 +200,6 @@ return {
     end,
   },
 
-  --  Schema is a file that describes the shape of another file — what
-  --  fields exist, what types they are, which are required, what the valid
-  --  values are. SchemaStore is simply a central place where thousands of
-  --  these descriptions are maintained for common tools.
-  -- { "b0o/SchemaStore.nvim", },
-  --
   -- { "j-hui/fidget.nvim", opts = {} },
   --
   -- {
@@ -203,6 +220,9 @@ return {
 
 Check LSP status:
   `:checkhealth lsp` to verify the status of LSP.
+
+Install and update language servers:
+  `:Mason` or `:LspInstall <server>` (see `lua/plugins/mason.lua`).
 
 Steps required to setup a language server:
   `:h lsp-quickstart`.
