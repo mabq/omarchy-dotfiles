@@ -1,7 +1,12 @@
--- External dependencies
---   ripgrep      Required by `live_grep` and `grep_string` pickers to search inside files
---   fd           Required by the `find_files` picker to create the initial list
---   make         Required to build fzf-native
+--[[
+  External tools required:
+
+   - ripgrep    Required by `live_grep` and `grep_string` pickers to search inside files
+   - fd         Required by the `find_files` picker to create the initial list
+   - make       Required to build fzf-native
+
+   These are not available in Mason, install them with the system package manager.
+--]]
 
 return {
   "nvim-telescope/telescope.nvim",
@@ -22,10 +27,10 @@ return {
         {
           {
             0, -- range start
-            (dir == ".") and -1 or #dir + 1 -- range end
+            (dir == ".") and -1 or #dir + 1, -- range end
           },
-          "TelescopeResultsComment" -- highlight group to apply
-        }
+          "TelescopeResultsComment", -- highlight group to apply
+        },
       }
       return path, highlights
     end
@@ -37,8 +42,8 @@ return {
         preview = false,
         results_title = false,
         mappings = {
-          i = { ["<C-y>"] = require("telescope.actions").select_default, }, -- follow the convention
-          n = { ["<C-y>"] = require("telescope.actions").select_default, }, -- follow the convention
+          i = { ["<C-y>"] = require("telescope.actions").select_default }, -- follow the convention
+          n = { ["<C-y>"] = require("telescope.actions").select_default }, -- follow the convention
         },
         path_display = dimm_dir,
       },
@@ -61,13 +66,17 @@ return {
             -- Note that this command is only used to produce the initial list,
             -- the filtering and ranking is performed entirely by fzf-native.
             "fd",
-            "--type", "file",        -- include files
-            "--type", "symlink",     -- include symlinks
-            "--color", "never",      -- telescope does not support colored output, https://github.com/nvim-telescope/telescope.nvim/blob/7d324792b7943e4aa16ad007212e6acc6f9fe335/lua/telescope/builtin/__files.lua#L291
-            "--hidden",              -- include my own hidden files
-            "--strip-cwd-prefix",    -- clean relative paths (no leading ./)
-            "--follow",              -- follow symlinks
-            "--exclude", ".git",     -- exclude .git explicitly
+            "--type",
+            "file", -- include files
+            "--type",
+            "symlink", -- include symlinks
+            "--color",
+            "never", -- telescope does not support colored output, https://github.com/nvim-telescope/telescope.nvim/blob/7d324792b7943e4aa16ad007212e6acc6f9fe335/lua/telescope/builtin/__files.lua#L291
+            "--hidden", -- include my own hidden files
+            "--strip-cwd-prefix", -- clean relative paths (no leading ./)
+            "--follow", -- follow symlinks
+            "--exclude",
+            ".git", -- exclude .git explicitly
             -- "--no-ignore",           -- don't respect .gitignore (telescope has its own filtering)
           },
         },
@@ -102,7 +111,7 @@ return {
         },
         lsp_references = {
           preview = true,
-          theme = "ivy"
+          theme = "ivy",
         },
       },
 
@@ -114,7 +123,7 @@ return {
           fuzzy = false, -- most of the time fuzzy matches are just noice
         },
         ["ui-select"] = {
-          require('telescope.themes').get_dropdown {},
+          require("telescope.themes").get_dropdown {},
         },
       },
     }
@@ -123,24 +132,27 @@ return {
     pcall(require("telescope").load_extension, "fzf") -- fzf-native, verify with `:checkhealth telescope`
     pcall(require("telescope").load_extension, "ui-select")
 
-
     -- Keymaps --
     local builtins = require "telescope.builtin"
 
     vim.keymap.set("n", "<leader>sf", builtins.find_files, { desc = "Files" })
-    vim.keymap.set("n", "<leader>sF", function() builtins.find_files({
-      cwd = require("telescope.utils").buffer_dir(),
-      prompt_title = "Files (bufdir)",
-    }) end, { desc = "Files (bufdir)" })
+    vim.keymap.set("n", "<leader>sF", function()
+      builtins.find_files {
+        cwd = require("telescope.utils").buffer_dir(),
+        prompt_title = "Files (bufdir)",
+      }
+    end, { desc = "Files (bufdir)" })
     vim.keymap.set("n", "<leader>sg", builtins.git_files, { desc = "Git Files" })
 
     vim.keymap.set("n", "<leader>sb", builtins.buffers, { desc = "Buffers" })
     vim.keymap.set("n", "<leader>sr", builtins.resume, { desc = "Resume" })
     vim.keymap.set("n", "<leader>sl", builtins.live_grep, { desc = "Live Grep" })
-    vim.keymap.set("n", "<leader>sL", function() builtins.live_grep({
-      cwd = require("telescope.utils").buffer_dir(),
-      prompt_title = "Live Grep (bufdir)",
-    }) end, { desc = "Live Grep (bufdir)" })
+    vim.keymap.set("n", "<leader>sL", function()
+      builtins.live_grep {
+        cwd = require("telescope.utils").buffer_dir(),
+        prompt_title = "Live Grep (bufdir)",
+      }
+    end, { desc = "Live Grep (bufdir)" })
     -- vim.keymap.set("n", "<leader>sd", builtins.diagnostics, { desc = "Diagnostics" })
     vim.keymap.set("n", "<leader>ss", builtins.spell_suggest, { desc = "Spelling Suggestions" })
     vim.keymap.set("n", "<leader>st", builtins.builtin, { desc = "Telescope" })
@@ -152,29 +164,28 @@ return {
     vim.keymap.set("n", "<leader>sng", builtins.highlights, { desc = "Highlight Groups" })
     vim.keymap.set("n", "<leader>snk", builtins.keymaps, { desc = "Keymaps" })
     vim.keymap.set("n", "<leader>snc", builtins.colorscheme, { desc = "Colorscheme" })
-    vim.keymap.set('n', '<leader>sn.', function() builtins.find_files {
-      cwd = vim.fn.stdpath 'config',
-      prompt_title = "Config Files (Neovim)",
-    } end, { desc = 'Config Files' })
+    vim.keymap.set("n", "<leader>sn.", function()
+      builtins.find_files {
+        cwd = vim.fn.stdpath "config",
+        prompt_title = "Config Files (Neovim)",
+      }
+    end, { desc = "Config Files" })
     vim.keymap.set("n", "<leader>sno", builtins.vim_options, { desc = "Options" })
-
-  end
+  end,
 }
-
---------------------------------------------------------------------------------
 
 --[[
 
-Help:
-  `:checkhealth telescope`
-  `:h telescope.setup()`
-  `:h telescope.builtin`
-  `:h telescope.default.mappings`
-   <c-/> in Telescope insert mode
-   ? in Telescope normal mode
+  Help:
+    `:checkhealth telescope`
+    `:h telescope.setup()`
+    `:h telescope.builtin`
+    `:h telescope.default.mappings`
+     <c-/> in Telescope insert mode
+     ? in Telescope normal mode
 
-Learn how to customize pickers:
-   `:h telescope.builtin[.<picker-name>]`.
-   E.g. `grep_string` is customized to use regex by default, see [Rust regex syntax](https://docs.rs/regex/1.11.1/regex/#syntax).
+  Learn how to customize pickers:
+     `:h telescope.builtin[.<picker-name>]`.
+     E.g. `grep_string` is customized to use regex by default, see [Rust regex syntax](https://docs.rs/regex/1.11.1/regex/#syntax).
 
 --]]
