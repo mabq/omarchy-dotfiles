@@ -10,6 +10,15 @@ hl.config {
   decoration = {
     rounding = 0,
   },
+
+  scrolling = {
+    wrap_focus = false,
+  },
+}
+
+hl.window_rule {
+  match = { fullscreen = true },
+  no_anim = true,
 }
 
 -- Opt another application in to Omarchy's standard transparency.
