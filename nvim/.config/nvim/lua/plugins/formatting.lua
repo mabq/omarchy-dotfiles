@@ -1,44 +1,69 @@
--- Default options - these options only affect indenting in insert mode.
+--[[
 
-vim.o.tabstop = 2 -- Columns multiple used to display a horizontal Tab character
-vim.o.shiftwidth = 0 -- Columns multiple for one level of (auto)indentation (`0` == 'tabstop')
-vim.o.softtabstop = -1 -- Columns multiple for Tab in insert mode (`-1` == `shiftwidth`)
-vim.o.expandtab = true -- Whether to insert spaces instead of a Tab character (does not convert existing tabs)
+  REQUIREMENTS:
 
-return {
-  --[[
+    Formatters are installed and managed by Mason. For a list of formatters
+    see: `:h conform-formatters`
+      https://github.com/stevearc/conform.nvim?tab=readme-ov-file#formatters
 
-  -- Guess Indent ---------------------------------------------------------------
+  EXPLANATION:
 
-  This plugin reads the first hundred lines of a file when opened to detect
-  whether spaces or tabs are used for indentation and how many colums are used
-  for each indentation level.
+    Guess Indent:
+      This plugin reads the first hundred lines of a file when opened to detect
+      whether spaces or tabs are used for indentation and how many colums are
+      used for each indentation level.
 
-  It then sets buffer local options to match what it sees. These local options
-  override the global options set above.
+      It then sets buffer local options to match what it sees. These local
+      options override the global options set above.
 
-  The plugin respects editorconfig settings. `.editorconfig` is a
-  project-level formatting convention file used by most editors and IDEs to
-  keep coding styles consistent across a team.
+      The plugin respects editorconfig settings. `.editorconfig` is a
+      project-level formatting convention file used by most editors and IDEs to
+      keep coding styles consistent across a team.
 
-  When you open a buffer, Neovim checks for an `.editorconfig` file, if it finds
-  one it sets the local buffer options accordingly:
+      When you open a buffer, Neovim checks for an `.editorconfig` file, if it
+      finds one it sets the local buffer options accordingly:
 
-    .editorconfig               Neovim local buffer option
-    --------------------   ->   --------------------------
-    indent_style = space        expandtab = true
-    indent_style = tab          expandtab = false
-    indent_size = 4             shiftwidth = 4
-    tab_width = 4               tabstop = 4
-    end_of_line                 fileformat
+        .editorconfig               Neovim local buffer option
+        --------------------   ->   --------------------------
+        indent_style = space        expandtab = true
+        indent_style = tab          expandtab = false
+        indent_size = 4             shiftwidth = 4
+        tab_width = 4               tabstop = 4
+        end_of_line                 fileformat
 
-  Commands:
+    Conform.nvim:
+      Configures formatting tools.
+
+      All the things described above only adjust editor behavior while you type,
+      when you run a formatter, it will use its own settings for indentation.
+
+      The cool thing is that some formatters, like stylua, also support
+      editorconfig files. When both files are present (e.g. `.editorconfig` and
+      `.stylua`) the latter takes presedence.
+
+  COMMANDS:
+
     `:GuessIndent` - toggle automatic indentation settings
 
-  Configuration options:
-     https://github.com/NMAC427/guess-indent.nvim#configuration
+    `:ConformInfo` - check if a formatter is attached to the current buffer
 
-  --]]
+    `:checkhealth conform` - verify everything is working fine with Conform
+
+    `:h conform.setup` - plugin configuration options
+
+    `:h conform.format` - format configuration options
+
+--]]
+
+-- Default Neovim options
+--   These options only affect indenting in insert mode.
+
+vim.o.tabstop = 2 -- columns multiple used to display a horizontal Tab character
+vim.o.shiftwidth = 0 -- columns multiple for one level of (auto)indentation (`0` == 'tabstop')
+vim.o.softtabstop = -1 -- columns multiple for Tab in insert mode (`-1` == `shiftwidth`)
+vim.o.expandtab = true -- whether to insert spaces instead of a Tab character (does not convert existing tabs)
+
+return {
   {
     "nmac427/guess-indent.nvim",
     opts = {
@@ -66,30 +91,6 @@ return {
     },
   },
 
-  --[[
-
-  -- Conform -------------------------------------------------------------------
-
-  Configure formatting tools.
-
-  All the things described above only adjust editor behavior while you type,
-  when you run a formatter, it will use its own settings for indentation.
-
-  The cool thing is that some formatters, like stylua, also support
-  editorconfig files. When both files are present (e.g. `.editorconfig` and
-  `.stylua`) the latter takes presedence.
-
-  Formatters are installed and managed by Mason. For a list of formatters see:
-    `:h conform-formatters`
-    https://github.com/stevearc/conform.nvim?tab=readme-ov-file#formatters
-
-  Commands:
-    `:ConformInfo` - check if a formatter is attached to the current buffer
-    `:checkhealth conform` - verify
-    `:h conform.setup` - plugin configuration options
-    `:h conform.format` - format configuration options
-
-  --]]
   {
     "stevearc/conform.nvim",
     lazy = false,
@@ -104,9 +105,6 @@ return {
       },
     },
     opts = {
-      -- These tools are installed by Mason (see `lua/plugins/mason.lua`), which
-      -- adds its `bin/` directory to Neovim's PATH. Verify with `:checkhealth conform`
-      -- For configuration options, see `:h conform.setup`
       formatters_by_ft = {
         css = { "biome" },
         javascript = { "biome" },

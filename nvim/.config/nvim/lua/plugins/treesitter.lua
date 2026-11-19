@@ -1,7 +1,7 @@
 --[[
   IMPORTANT: External packages required!
 
-    - tree-sitter-cli (installed by Mason, see `lua/plugins/mason.lua`)
+    - tree-sitter-cli (installed by Mason, see `lua/plugins/formatting.lua`)
     - gcc or clang (to compile parsers, not available in Mason)
     - curl, tar (to download parsers, not available in Mason)
 --]]

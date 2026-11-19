@@ -1,45 +1,95 @@
---  LSP servers are installed and managed by Mason (see `lua/plugins/mason.lua`),
---  so this configuration does not depend on the system package manager.
---
---  A few servers are not available in the Mason registry (`mise` and `nixd`).
---  Install those with whatever tool manages them on your machine (Nix, mise,
---  system package manager, ...) — they are enabled only when found in PATH.
---
---  If you don't know where to find an LSP for a given language check the
---  instructions provided for that specific LSP in `:h lspconfig-all`.
---
---  Mason adds its `bin/` directory to Neovim's PATH. Verify a server is available with
---  `:echo executable("<lsp-command>")`, e.g. `:echo executable("lua-language-server")` for lua_ls.
+--[[
+
+  REQUIREMENTS:
+
+    The LSP servers configured here are installed in `mason.lua`. Keep in mind
+    that Mason uses the tool name to install packages and neovim LSP uses
+    neovim names to configure them.
+
+    IMPORTANT:
+      Some of the LSP servers are not available in Mason, install those
+      manually using the system package manager.
+
+  EXPLANATION:
+
+    neovim/nvim-lspconfig:
+      Has the default configurations for all LSPs. `vim.lsp.config`
+      automatically finds them and merges them with any configurations you
+      setup here.
+
+    saghen/blink.cmp:
+      Completion plugin that works with the LSP.
+
+    b0o/schemastore.nvim:
+      Provides the SchemaStore catalog for use with jsonls and yamlls — these
+      schemas give static files the same features as LSPs.
+
+  COMMANDS:
+
+    `:h lspconfig-all` — default configuration options of each LSP.
+
+    `:h lsp` — everything you need to know about Neovim LSP.
+
+    `:checkhealth vim.lsp` — verify if there are any problems with LSP config.
+
+    `:h vim.lsp.Config` — attributes accepted to configure an LSP.
+
+    `:=vim.lsp.protocol.make_client_capabilities()` - Neovim capabilities
+    `:=vim.lsp.get_clients()[1].server_capabilities` - attached LSP capabilities
+
+  VIDEOS:
+
+    Understanding Neovim #7 - Language Server Protocol
+      https://www.youtube.com/watch?v=HL7b63Hrc8U&list=PLx2ksyallYzW4WNYHD9xOFrPRYGlntAft&index=7
+
+    Common pitfalls
+      https://youtu.be/UVcC5ifbXL8?si=LJ8-DBjCPvQ3DZmr&t=439
+
+--]]
 
 return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
       "saghen/blink.cmp",
-
-      -- A Neovim plugin that provides the SchemaStore catalog for use with
-      -- jsonls and yamlls — if a programming language's LSP gives you
-      -- intelligent code intelligence based on an AST (Abstract Syntax Tree)
-      -- and type checker, a json/yaml schema gives an LSP the exact same
-      -- superpower for a static configuration file. It turns a plain text file
-      -- into a strongly-typed, self-documenting document.
       "b0o/schemastore.nvim",
     },
     config = function()
       --------------------------------------------------------------------------
-      -- This is the list of LSP servers to enable and their configs, pass an
-      -- emtpy table `{}` to use the default configuration.
-      --
-      -- These customized configurations will be merged with the ones
-      -- provided by nvim-lspconfig. Pass an emtpy table `{}` to use the
-      -- default config. See `:h lspconfig-all`.
+
+      -- Configure LSP servers:
+      --   These configurations will be merged with the ones provided by
+      --   `nvim-lspconfig`. Pass an emtpy table `{}` to use the default config.
+      --   See `:h lspconfig-all`.
 
       local servers = {
+        -- mise --
+        --   The LSP comes builtin, no need to install with Mason
+        mise = {},
 
-        -- Bash (installed by Mason: `bash-language-server`, `shellcheck` and `shfmt`)
+        -- nixd --
+        --   The LSP is not available in Mason, install with package manager
+        nixd = {
+          -- watch https://www.youtube.com/watch?v=M_zMoHlbZBY
+          cmd = { "nixd" },
+          settings = {
+            nixd = {
+              nixpkgs = {
+                expr = "import <nixpkgs> { }",
+              },
+              options = {
+                nixos = {
+                  expr = '(buintins.getFlake "/home/mabq/.local/share/mynix").nixosConfigurations.xps.options',
+                },
+              },
+            },
+          },
+        },
+
+        -- bash-language-server --
         bashls = {},
 
-        -- JSON (installed by Mason: `vscode-json-language-server`)
+        -- json-lsp --
         jsonls = {
           settings = {
             json = {
@@ -51,10 +101,10 @@ return {
           },
         },
 
-        -- Mise's LSP is built into the mise binary (not available in Mason)
-        mise = {},
+        -- yaml-language-server --
+        yamlls = {},
 
-        -- Lua (installed by Mason: `lua-language-server`)
+        -- lua-language-server --
         lua_ls = {
           on_init = function(client)
             if client.workspace_folders then
@@ -98,55 +148,25 @@ return {
             Lua = {},
           },
         },
-
-        -- Nix (nixd is not available in Mason, install it separately)
-        -- Watch https://www.youtube.com/watch?v=M_zMoHlbZBY
-        nixd = {
-          cmd = { "nixd" },
-          settings = {
-            nixd = {
-              nixpkgs = {
-                expr = "import <nixpkgs> { }",
-              },
-              -- formatting = {
-              --   command = "nixfmt",
-              -- },
-              options = {
-                nixos = {
-                  expr = '(buintins.getFlake "/home/mabq/.local/share/mynix").nixosConfigurations.xps.options',
-                },
-              },
-            },
-          },
-        },
       }
 
       --------------------------------------------------------------------------
 
-      -- Register the config for every server. This does not start the server;
-      -- a server starts only after it is enabled.
+      -- Configure and start each server --
+
       for name, config in pairs(servers) do
-        config.capabilities = require("blink.cmp").get_lsp_capabilities(config.capabilities) -- add LSP capabilities provided by Blink
+        -- Add LSP capabilities provided by Blink
+        config.capabilities = require("blink.cmp").get_lsp_capabilities(config.capabilities)
         vim.lsp.config(name, config)
-      end
-
-      -- mason-lspconfig enables every server installed by Mason automatically.
-      -- Servers that are not in the Mason registry must be installed by other
-      -- means, so enable them only when their executable exists in PATH.
-      local external_servers = {
-        mise = "mise",
-        nixd = "nixd",
-      }
-
-      for name, executable in pairs(external_servers) do
-        if vim.fn.executable(executable) == 1 then
-          vim.lsp.enable(name)
-        end
+        -- if vim.fn.executable() == 1 then
+        vim.lsp.enable(name)
+        -- end
       end
 
       --------------------------------------------------------------------------
 
-      -- Add keymaps to the buffer when an LSP is attached
+      -- Add keymaps to the buffer when an LSP is attached --
+
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }), -- clear to avoid duplication
         callback = function(event)
@@ -201,7 +221,7 @@ return {
   },
 
   -- { "j-hui/fidget.nvim", opts = {} },
-  --
+
   -- {
   --   "dmmulroy/tsc.nvim",
   --   config = function()
@@ -210,49 +230,9 @@ return {
   --     }
   --   end,
   -- },
+
   -- {
   --   "pmizio/typescript-tools.nvim",
   --   dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
   -- },
 }
-
---[[
-
-Check LSP status:
-  `:checkhealth lsp` to verify the status of LSP.
-
-Install and update language servers:
-  `:Mason` or `:LspInstall <server>` (see `lua/plugins/mason.lua`).
-
-Steps required to setup a language server:
-  `:h lsp-quickstart`.
-
-Attributes accepted by `vim.lsp.config()`:
-  `:h vim.lsp.Config`
-  `:h vim.lsp.ClientConfig`
-
-Check capabilities:
-  `:=vim.lsp.protocol.make_client_capabilities()` - Neovim capabilities
-  `:=vim.lsp.get_clients()[1].server_capabilities` - attached LSP capabilities
-
-Where lsp configs can be stored and how they are merged:
-  `:h lsp-new-config`
-  `:h lsp-config-merge`
-
-Default features and keymaps set by Neovim for LSP usage and how you can disable them:
-  `:h lsp-defaults`
-
-Commands to enable, disable, restart and stop language servers:
-  `:h lsp-commands`
-
-How to create autocommands to attach a language server to the buffer:
-  `:h lsp-attach`
-
-LSP frequently asked questions:
-  `:h lsp-faq`
-
-Helpful videos:
-  [Understanding Neovim #7 - Language Server Protocol](https://www.youtube.com/watch?v=HL7b63Hrc8U&list=PLx2ksyallYzW4WNYHD9xOFrPRYGlntAft&index=7).
-  [Common pitfalls](https://youtu.be/UVcC5ifbXL8?si=LJ8-DBjCPvQ3DZmr&t=439)
-
---]]
