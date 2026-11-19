@@ -63,6 +63,9 @@ return {
       --   See `:h lspconfig-all`.
 
       local servers = {
+        -- vim-language-server --
+        vimls = {},
+
         -- mise --
         --   The LSP comes builtin, no need to install with Mason
         mise = {},
@@ -79,7 +82,7 @@ return {
               },
               options = {
                 nixos = {
-                  expr = '(buintins.getFlake "/home/mabq/.local/share/mynix").nixosConfigurations.xps.options',
+                  -- expr = '(buintins.getFlake "/home/mabq/.local/share/mynix").nixosConfigurations.xps.options',
                 },
               },
             },
@@ -102,7 +105,12 @@ return {
         },
 
         -- yaml-language-server --
-        yamlls = {},
+        yamlls = {
+          settings = {
+            yaml = { schemas = require("schemastore").yaml.schemas() },
+            validate = { enable = true },
+          },
+        },
 
         -- lua-language-server --
         lua_ls = {
@@ -158,9 +166,9 @@ return {
         -- Add LSP capabilities provided by Blink
         config.capabilities = require("blink.cmp").get_lsp_capabilities(config.capabilities)
         vim.lsp.config(name, config)
-        -- if vim.fn.executable() == 1 then
+
+        -- Neovim 0.12 silently skips configs whose cmd isn't executable
         vim.lsp.enable(name)
-        -- end
       end
 
       --------------------------------------------------------------------------

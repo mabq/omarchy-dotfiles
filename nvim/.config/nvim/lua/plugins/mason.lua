@@ -39,7 +39,8 @@
     `:echo executable("<lsp-command>")` — check the binary is in Neovim's PATH,
     for example `:echo executable("lua-language-server")`.
 
-    `:echo exepath("<command>")` — shows the path of the executable
+    `:echo exepath("<command>")` — shows the path of the executable. Mason's
+    bin wins on PATH.
 
     For all Mason commands, visit: https://github.com/mason-org/mason.nvim#commands
 
@@ -48,12 +49,13 @@
 return {
   {
     "mason-org/mason.nvim",
-    lazy = false, -- set up on startup so its bin directory is added to PATH
+    lazy = false, -- append Mason's `bin/` directory to PATH during startup
     opts = {},
   },
 
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    dependencies = { "mason-org/mason.nvim" },
     opts = {
       ensure_installed = {
         -- Vim

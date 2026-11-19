@@ -108,6 +108,7 @@ return {
       formatters_by_ft = {
         css = { "biome" },
         javascript = { "biome" },
+        javascriptreact = { "biome" },
         json = { "biome" },
         jsonc = { "biome" },
         lua = { "stylua", lsp_format = "never" },
@@ -115,6 +116,9 @@ return {
         nix = { "nixfmt" },
         sh = { "shfmt" },
         typescript = { "biome" },
+        yaml = { "yamlfmt" },
+        html = { "biome" },
+        typescriptreact = { "biome" },
       },
       default_format_opts = {
         async = true, -- do not block
