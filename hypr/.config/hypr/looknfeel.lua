@@ -6,16 +6,9 @@ hl.config {
     gaps_in = 2,
     layout = "scrolling",
   },
-
-  decoration = {
-    rounding = 0,
-  },
-
-  scrolling = {
-    wrap_focus = false,
-  },
 }
 
+-- Do not animate transisions between fullscreen windows
 hl.window_rule {
   match = { fullscreen = true },
   no_anim = true,
