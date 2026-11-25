@@ -19,7 +19,17 @@ hl.animation { leaf = "specialWorkspaceIn", enabled = 0 }
 hl.animation { leaf = "specialWorkspaceOut", enabled = 0 }
 
 -- No gaps when there's only one visible tiled window (or a maximized one)
--- hl.workspace_rule { workspace = "w[tv1]s[false]", border_size = 0 }
+-- hl.workspace_rule {
+--   workspace = "w[tv1]s[false]",
+--   border_size = 0,
+-- }
+
+-- E.g. No border for specic apps
+-- hl.window_rule {
+--   name = "no-brave-border",
+--   match = { class = "brave-browser", float = false },
+--   border_size = 0,
+-- }
 
 --
 

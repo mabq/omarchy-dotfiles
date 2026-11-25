@@ -64,9 +64,20 @@ o.bind("SUPER + SHIFT + G", "WhatsApp", { webapp = "https://web.whatsapp.com/", 
 -- Add hex dictation — completely local voice to text app.
 -- Use the "Parakeet V3" model for English/Spanish dictation.
 o.bind_hold(
-  "Alt_R",
+  "SUPER + h", -- this keybind is free
   "Dictate (Hex)",
   "/home/mabq/.local/bin/hex dictation start",
   "Stop dictating (Hex)",
   "/home/mabq/.local/bin/hex dictation stop"
 )
+
+-- flea --default: begin. Written by `flea --default`; `flea --default off` removes the block whole.
+hl.unbind("SUPER + SHIFT + F")
+o.bind("SUPER + SHIFT + F", "File manager", { launch = 'flea --gui' })
+hl.unbind("SUPER + ALT + SHIFT + F")
+o.bind("SUPER + ALT + SHIFT + F", "File manager (cwd)", { launch = 'flea --gui "$(omarchy-cmd-terminal-cwd)"' })
+-- flea --default: end.
+
+-- flea --picker: begin. Written by `flea --picker`; `flea --picker off` removes the block whole.
+o.window("com.thisisgm.flea.picker", { tag = "+floating-window" })
+-- flea --picker: end.
