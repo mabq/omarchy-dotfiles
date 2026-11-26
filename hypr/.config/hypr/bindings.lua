@@ -2,13 +2,13 @@
 
   NOTES:
 
-    It seems that Hyprland is trying to do too much, there are too many layout
+    It seems like Hyprland is trying to do too much, there are too many layout
     modes and not all dispatchers work properly in all of them. The Scrolling
     layout is not even near as polished as it is in Niri.
 
     The compositor part could be easily replaced in other distros with Niri and
-    have a much better personalized experience. Omarchy overly complicate
-    things in order to please as much people as possible.
+    have a much better  experience. Omarchy has to overly complicate things in
+    order to please a broader audience.
 
     For more information visit Omarchy's keybinds manual page:
       https://omarchy.org/manual/hotkeys/
@@ -19,13 +19,13 @@
 -- System actions --
 --------------------------------------------------------------------------------
 
--- Disable duplicated keybind, user `SUPER + W` instead
+-- Delete keybind — `SUPER + W` is enough
 hl.unbind "SUPER + Q"
 
--- Easier than `SUPER + CTRL + Tab` for such a common action. This keybind is free.
+-- New keybind - easier than `SUPER + CTRL + Tab`
 o.bind("SUPER + b", "Back to last workspace", hl.dsp.focus { workspace = "previous_per_monitor" })
 
--- Do not touch app fullscreen mode, just window state.
+-- Improve the keybind — do not touch app state when doing a window fullscreen
 hl.unbind "SUPER + F"
 o.bind(
   "SUPER + F",
@@ -33,11 +33,11 @@ o.bind(
   hl.dsp.window.fullscreen_state {
     action = "toggle",
     internal = 2, -- window
-    client = -1, -- application
+    client = -1, -- app
   }
 )
 
--- Do not touch window fullscreen state, just app fullscreen state.
+-- Improve the keybind — do not touch window state when doing an app fullscreen
 hl.unbind "SUPER + CTRL + F"
 o.bind(
   "SUPER + CTRL + F",
@@ -45,7 +45,7 @@ o.bind(
   hl.dsp.window.fullscreen_state {
     action = "toggle",
     internal = -1, -- window
-    client = 2, -- application
+    client = 2, -- app
   }
 )
 
@@ -53,31 +53,27 @@ o.bind(
 -- Apps --
 --------------------------------------------------------------------------------
 
--- Replace Hey email app with iCloud
+-- Change keybind — I don't use Hey, so take the keymap for iCloud mail
 hl.unbind "SUPER + SHIFT + E"
 o.bind("SUPER + SHIFT + E", "Email", { webapp = "https://www.icloud.com/mail/" })
 
--- Replace Signal with Whatsapp
+-- Change keybind — I dont use Signal, so take the easier keybind for Whatsapp
 hl.unbind "SUPER + SHIFT + G"
 o.bind("SUPER + SHIFT + G", "WhatsApp", { webapp = "https://web.whatsapp.com/", focus = true })
 
--- Add hex dictation — completely local voice to text app.
--- Use the "Parakeet V3" model for English/Spanish dictation.
+-- New keybind — Hex dictation (use the "Parakeet v3" model for english/spanish)
 o.bind_hold(
-  "SUPER + h", -- this keybind is free
+  "SUPER + h",
   "Dictate (Hex)",
   "/home/mabq/.local/bin/hex dictation start",
   "Stop dictating (Hex)",
   "/home/mabq/.local/bin/hex dictation stop"
 )
 
--- flea --default: begin. Written by `flea --default`; `flea --default off` removes the block whole.
-hl.unbind("SUPER + SHIFT + F")
-o.bind("SUPER + SHIFT + F", "File manager", { launch = 'flea --gui' })
-hl.unbind("SUPER + ALT + SHIFT + F")
+-- Change the keybinds — use Flea instead of Files as the default file manager
+hl.unbind "SUPER + SHIFT + F"
+o.bind("SUPER + SHIFT + F", "File manager", { launch = "flea --gui" })
+hl.unbind "SUPER + ALT + SHIFT + F"
 o.bind("SUPER + ALT + SHIFT + F", "File manager (cwd)", { launch = 'flea --gui "$(omarchy-cmd-terminal-cwd)"' })
--- flea --default: end.
-
--- flea --picker: begin. Written by `flea --picker`; `flea --picker off` removes the block whole.
+-- Make flea the default file picker
 o.window("com.thisisgm.flea.picker", { tag = "+floating-window" })
--- flea --picker: end.

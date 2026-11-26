@@ -13,6 +13,10 @@ hl.config {
     -- from a fullscreen window.
     -- movefocus_cycles_fullscreen = true,
   },
+
+  scrolling = {
+    focus_fit_method = 0, -- center window when focused
+  },
 }
 
 hl.animation { leaf = "specialWorkspaceIn", enabled = 0 }
