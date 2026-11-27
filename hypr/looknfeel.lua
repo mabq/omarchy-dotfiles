@@ -4,33 +4,25 @@ hl.config {
   general = {
     layout = "scrolling",
 
-    border_size = 2,
-
-    gaps_out = 4,
-    gaps_in = 4,
-
-    no_focus_fallback = false,
+    -- gaps_out = 6,
+    -- gaps_in = 3,
   },
 
   decoration = {
     rounding = 2,
   },
 
-  binds = {
-    -- Disable this to move between monitors, enable it to allow focus change from a fullscreen window.
-    --movefocus_cycles_fullscreen = true,
-  },
-
   scrolling = {
     fullscreen_on_one_column = false,
     column_width = 0.80,
     focus_fit_method = 0, -- center window when focused
-    explicit_column_widths = "0.33, 0.50, 0.66, 0.80, 0.90, 0.98",
+    explicit_column_widths = "0.33, 0.50, 0.66, 0.80, 0.90, 1",
     wrap_focus = false,
     wrap_swapcol = false,
   },
 }
 
+-- Disable animation of special workspace
 hl.animation { leaf = "specialWorkspaceIn", enabled = 0 }
 hl.animation { leaf = "specialWorkspaceOut", enabled = 0 }
 

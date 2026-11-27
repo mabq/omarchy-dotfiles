@@ -8,8 +8,7 @@ overload_tap_timeout = 300
 # ------------------------------------------------------------------------------
 
 [main]
-# Capslock is used by XCompose to input frequently used unicode characters
-capslock = overload(control, capslock)
+capslock = layer(control)
 enter = overload(control, enter)
 f = overload(nav, f)
 ; = overload(symbols, ;)
@@ -42,13 +41,15 @@ n = enter
 . = ]
 / = \
 
+# My omarchy config uses ralt as the compose key
+space = rightalt
+
 # ------------------------------------------------------------------------------
 # Nav2
 # ------------------------------------------------------------------------------
 
 [nav2]
 
-u = capslock
 i = f2
 o = delete
 p = macro(C-S-tab)
@@ -83,16 +84,6 @@ g = =
 v = |
 
 b = &
-
-space  = layer(unicode)
-
-# ------------------------------------------------------------------------------
-# Unicode
-# ------------------------------------------------------------------------------
-
-[unicode]
-
-- = —
 
 # ------------------------------------------------------------------------------
 # Media

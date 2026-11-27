@@ -1,13 +1,19 @@
 -- See https://wiki.hypr.land/Configuring/Basics/Variables/#input
 hl.config {
   input = {
-    -- Use multiple keyboard layouts and switch between them with Left Alt + Right Alt.
-    kb_layout = "us,us",
-    -- kb_options = "compose:caps,shift:both_capslock_cancel,grp:alt_space_toggle",
-    kb_options = "compose:caps,shift:both_capslock_cancel",
+    -- For keyboard layouts, variants and options read the file
+    -- `/usr/share/X11/xkb/rules/evdev.lst`.
 
-    -- Use a specific keyboard variant if needed (e.g. intl for international keyboards).
+    -- Same layout, two variants — switch with `super + i`
+    kb_layout = "us,us",
     kb_variant = ",intl",
+
+    -- Omarchy uses Capslock as the compose key. I prefer to completely disable
+    -- the capslock key, remaping it to Ctrl key with keyd, because when I
+    -- accidentally enable it, it fires other commands in Neovim. Use ralt as
+    -- compose key instead — its available in any keyboard and I also provide
+    -- an easier layered key in keyd.
+    kb_options = "compose:ralt",
 
     -- Change speed of keyboard repeat.
     repeat_rate = 40,

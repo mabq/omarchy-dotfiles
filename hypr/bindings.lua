@@ -13,11 +13,18 @@
 -- System
 --------------------------------------------------------------------------------
 
+-- Focus
+--  Do not remap these, the default dispatchers move focus to the monitor on
+--  that side once there’s no window left in that direction. The ones specific
+--  to scrolling mode don't. For more information see:
+--  https://omarchy.org/manual/monitors/#arranging-multiple-screens
+
 -- Delete keybind — `SUPER + W` is enough
 hl.unbind "SUPER + Q"
 
--- Delete keybind — avoid accidental layout changes
-hl.unbind "SUPER + L"
+-- Move keybind — frequent accidental layout changes reset window sizes
+hl.unbind "SUPER + l"
+o.bind("SUPER + SEMICOLON", "Cycle workspace layout", "omarchy-hyprland-workspace-layout-toggle")
 
 -- New keybind - easier than `SUPER + CTRL + Tab` for super frequent action
 o.bind("SUPER + b", "Back to last workspace", hl.dsp.focus { workspace = "previous_per_monitor" })
@@ -30,6 +37,9 @@ o.rebind(
     action = "toggle",
     internal = 2, -- window
     client = -1, -- app
+    -- Without this, when going out of fullscreen in scrolling mode, the window
+    -- occupies the full width, not the size it was before going full screen.
+    layout_aware = false,
   }
 )
 
