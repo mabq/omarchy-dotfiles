@@ -2,20 +2,26 @@
 
 hl.config {
   general = {
+    layout = "scrolling",
+
     gaps_out = 0,
-    gaps_in = 0,
+    gaps_in = 4,
 
     no_focus_fallback = false,
   },
 
   binds = {
-    -- Disable this to move between monitors, enable it to allow focus change
-    -- from a fullscreen window.
-    -- movefocus_cycles_fullscreen = true,
+    -- Disable this to move between monitors, enable it to allow focus change from a fullscreen window.
+    --movefocus_cycles_fullscreen = true,
   },
 
   scrolling = {
+    fullscreen_on_one_column = false,
+    column_width = 0.80,
     focus_fit_method = 0, -- center window when focused
+    explicit_column_widths = "0.33, 0.50, 0.66, 0.80, 0.90, 0.98",
+    wrap_focus = false,
+    wrap_swapcol = false,
   },
 }
 

@@ -6,11 +6,11 @@ set -euo pipefail
 # ------------------------------------------------------------------------------
 
 # Default theme — use names like `tokyo-night` instead of `Tokyo Night`.
-#  See `/usr/share/omarchy/bin/omarchy-theme-set`
+#  See `/usr/bin/omarchy-theme-set`
 DEFAULT_THEME="kanagawa"
 
 # Default browser
-#  See `/usr/share/omarchy/bin/omarchy-default-browser`
+#  See `/usr/bin/omarchy-default-browser`
 DEFAULT_BROWSER="brave-origin"
 
 # ------------------------------------------------------------------------------
@@ -50,11 +50,15 @@ stow -d "$dotfiles_dir" -t "$HOME" "${packages[@]}"
 # The Top Bar
 # ------------------------------------------------------------------------------
 
+# Make changes via commands, later you can regenerate default config files to
+# include any new Omarchy defaults and rerun this script to apply these changes
+# on top.
+
 # Remove omarchy icon from bar
 omarchy plugin disable omarchy.menu
 
 # Put the bar on the right
-omarchy bar position right
+# omarchy bar position right
 
 # Make it glassy
 omarchy bar background glassy
@@ -69,8 +73,8 @@ omarchy theme set "$DEFAULT_THEME"
 # Background
 # ------------------------------------------------------------------------------
 
-# Include a background called `default.jpg` if theme dotfiles if you want to
-# set it automatically.
+# Include a background called `default.jpg` in theme dotfiles if you want to
+# set a custom background automatically.
 BACKGROUND="$HOME/.config/omarchy/backgrounds/$DEFAULT_THEME/default.jpg"
 if [[ -f "$BACKGROUND" ]]; then
   omarchy theme bg set "$BACKGROUND"
@@ -88,7 +92,7 @@ omarchy default browser "$DEFAULT_BROWSER"
 case "$DEFAULT_BROWSER" in
 "brave" | "brave-origin")
   sudo mkdir -p "/etc/brave/policies/managed"
-  sudo ln -sf "$dotfiles_dir/.system/brave/extensions.json" /etc/brave/policies/managed/extensions.json
+  sudo ln -sf "$dotfiles_dir/.brave/extensions.json" /etc/brave/policies/managed/extensions.json
   ;;
 esac
 
@@ -107,37 +111,70 @@ omarchy install service dropbox
 #   The tailscale omarche shell plugin is pretty cool
 omarchy install service tailscale
 
-exit
+# ------------------------------------------------------------------------------
+# Web Apps
+# ------------------------------------------------------------------------------
 
-# -- Web Apps ------------------------------------------------------------------
-
-# -- Remove
-omarchy webapp remove Hey
-omarchy webapp remove Basecamp
-omarchy webapp remove ChatGPT
-omarchy webapp remove Grok
+# Remove stuff I never use
+omarchy webapp remove "Hey"
+omarchy webapp remove "Basecamp"
+omarchy webapp remove "ChatGPT"
+omarchy webapp remove "Grok"
 omarchy webapp remove "Google Messages"
 omarchy webapp remove "Google Photos"
 omarchy webapp remove "Google Contacts"
 
-# -- Install
-omarchy webapp install "iCloud Email" "https://www.icloud.com/mail/" "" # -- empty icon url
+# Install new ones
+#  Only install web apps if you want to open them through the Omarchy menu,
+#  otherwise just set a keybind.
+#
+#  The third argument is required — leave it empty (`""`) to retrieve it from favicon.
+omarchy webapp install "<name>" "<url>" "<icon-url>"
 
-# -- PDFs ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Windows VM
+# ------------------------------------------------------------------------------
 
-#    This is where all available Linux apps disappoint, none of them come even
-#    close to what is available in MacOS/Windows.
+# If there is any program you still need for which there is no alternative in
+# Linux, you can run Windows inside Omarchy. The installation is dead-simple
+# through the main menu.
 
-# -- Windows VM ----------------------------------------------------------------
-#    Run Windows inside Omarchy with a single command, wow!
+# ------------------------------------------------------------------------------
+# Add other packages
+# ------------------------------------------------------------------------------
 
-# -- Other packages ------------------------------------------------------------
+# Keyd
+omarchy pkg add keyd
+if [ ! -d /etc/keyd ]; then
+  sudo ln -sf "$dotfiles_dir/.keyd/default" /etc/keyd
+fi
+if ! systemctl is-enabled --quiet "keyd.service"; then
+  sudo systemctl enable "keyd.service"
+  echo "Enabled keyd service"
+fi
+if ! systemctl is-active --quiet "keyd.service"; then
+  sudo systemctl start "keyd.service"
+  echo "Started keyd service"
+fi
 
-#    Install addtional packages from the official repository
-omarchy pkg add keyd flea
+# Flea
+omarchy pkg add flea
 
-#    Install additional packages from AUR (be careful)
-omarchy pkg add aur hex-bin
+# Yazi
+omarchy pkg add yazi
 
-#    Remove unnecessary packages
-# omarchy pkg drop [package]
+# Hex
+#  Manually download the "Parakeet v3" model for spanish/english recognition
+omarchy pkg aur add hex-bin
+if ! hex status >/dev/null 2>&1; then
+  hex start
+fi
+
+# ------------------------------------------------------------------------------
+# Remove packages
+# ------------------------------------------------------------------------------
+
+# Remove unnecessary packages
+#omarchy pkg drop [package]
+
+exit

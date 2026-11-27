@@ -1,28 +1,25 @@
---[[
+--------------------------------------------------------------------------------
+-- Notes
+--------------------------------------------------------------------------------
 
-  NOTES:
+-- Omarchy keybinds follow a plane pattern, make sure you follow that pattern.
+--  https://omarchy.org/manual/hotkeys/
 
-    It seems like Hyprland is trying to do too much, there are too many layout
-    modes and not all dispatchers work properly in all of them. The Scrolling
-    layout is not even near as polished as it is in Niri.
-
-    The compositor part could be easily replaced in other distros with Niri and
-    have a much better  experience. Omarchy has to overly complicate things in
-    order to please a broader audience.
-
-    For more information visit Omarchy's keybinds manual page:
-      https://omarchy.org/manual/hotkeys/
-
---]]
+-- Omarchy default keybinds use the general purpose Hyprland dispatchers, which
+-- do not work in all layout modes. Fullscreen windows in Scrolling layout are
+-- not ideal.
 
 --------------------------------------------------------------------------------
--- System actions --
+-- System
 --------------------------------------------------------------------------------
 
 -- Delete keybind — `SUPER + W` is enough
 hl.unbind "SUPER + Q"
 
--- New keybind - easier than `SUPER + CTRL + Tab`
+-- Delete keybind — avoid accidental layout changes
+hl.unbind "SUPER + L"
+
+-- New keybind - easier than `SUPER + CTRL + Tab` for super frequent action
 o.bind("SUPER + b", "Back to last workspace", hl.dsp.focus { workspace = "previous_per_monitor" })
 
 -- Improve the keybind — do not touch app state when doing a window fullscreen
@@ -49,13 +46,17 @@ o.bind(
   }
 )
 
+-- New keybinds — fast column resize
+o.bind("SUPER + BRACKETRIGHT", "Column resize up", hl.dsp.layout "colresize +conf")
+o.bind("SUPER + BRACKETLEFT", "Column resize down", hl.dsp.layout "colresize -conf")
+
 --------------------------------------------------------------------------------
--- Apps --
+-- Apps
 --------------------------------------------------------------------------------
 
 -- Change keybind — I don't use Hey, so take the keymap for iCloud mail
 hl.unbind "SUPER + SHIFT + E"
-o.bind("SUPER + SHIFT + E", "Email", { webapp = "https://www.icloud.com/mail/" })
+o.bind("SUPER + SHIFT + E", "Email (iCloud)", { webapp = "https://www.icloud.com/mail/" })
 
 -- Change keybind — I dont use Signal, so take the easier keybind for Whatsapp
 hl.unbind "SUPER + SHIFT + G"

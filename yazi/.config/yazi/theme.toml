@@ -1,0 +1,10 @@
+# Docs:
+#  https://yazi-rs.github.io/docs/configuration/theme/
+
+# Make tabs readable
+[tabs]
+active   = { fg = "yellow", bg = "reset", reversed = true }
+inactive = { fg = "yellow", bg = "reset" }
+
+sep_inner = { open = "", close = "" }
+sep_outer = { open = "", close = "" }
