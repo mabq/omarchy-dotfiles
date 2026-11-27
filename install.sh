@@ -151,8 +151,8 @@ omarchy webapp remove "Google Contacts"
 # ------------------------------------------------------------------------------
 # Yazi
 # ------------------------------------------------------------------------------
-
 omarchy pkg add yazi
+
 force_link "$DOTFILES_DIR/yazi" "$HOME/.config/yazi"
 
 # ------------------------------------------------------------------------------
@@ -162,6 +162,7 @@ force_link "$DOTFILES_DIR/yazi" "$HOME/.config/yazi"
 # Hex
 #  NOTE: manually download the "Parakeet v3" model for spanish/english recognition
 omarchy pkg aur add hex-bin
+
 if ! hex status >/dev/null 2>&1; then
   hex start
 fi

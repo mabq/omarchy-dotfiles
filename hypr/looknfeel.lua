@@ -4,10 +4,16 @@ hl.config {
   general = {
     layout = "scrolling",
 
-    gaps_out = 0,
+    border_size = 2,
+
+    gaps_out = 4,
     gaps_in = 4,
 
     no_focus_fallback = false,
+  },
+
+  decoration = {
+    rounding = 2,
   },
 
   binds = {
