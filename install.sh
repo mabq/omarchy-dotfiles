@@ -2,8 +2,11 @@
 set -euo pipefail
 
 # ------------------------------------------------------------------------------
-# Variables
+# Preferences
 # ------------------------------------------------------------------------------
+
+# Where the dotfiles repo was cloned
+DOTFILES_DIR="$HOME/dotfiles"
 
 # Default theme — use names like `tokyo-night` instead of `Tokyo Night`.
 #  See `/usr/bin/omarchy-theme-set`
@@ -14,77 +17,46 @@ DEFAULT_THEME="kanagawa"
 DEFAULT_BROWSER="brave-origin"
 
 # ------------------------------------------------------------------------------
-# Dotfiles (home)
+# Utility functions
 # ------------------------------------------------------------------------------
 
-# Put dotfiles in place — put system-level files in the hidden directory `.system/`
+force_link() {
+  src="$1"
+  dest="$2"
+  parent="$(dirname "$dest")"
 
-dotfiles_dir="$HOME/dotfiles"
-packages=()
+  # Use sudo only if we can't write to the parent directory — creating, moving,
+  # or removing an entry depends on write permission to the directory
+  # containing it, not the entry itself.
+  if [ -w "$parent" ]; then
+    run=""
+  else
+    run="sudo"
+  fi
 
-for entry in "$dotfiles_dir"/*/; do
-  [ -d "$entry" ] || continue
-  pkg="$(basename "$entry")"
-  case "$pkg" in
-  .*) continue ;; # skip hidden directories
-  esac
-  packages+=("$pkg")
-done
+  if [ -L "$dest" ] && [ "$(readlink "$dest")" = "$src" ]; then
+    return 0 # already correct
+  fi
 
-stow -d "$dotfiles_dir" -t "$HOME" "${packages[@]}"
+  if [ -e "$dest" ] || [ -L "$dest" ]; then
+    # Backup any existing file/directory
+    $run mv "$dest" "$dest.bak.$(date +%s)"
+  fi
 
-# ------------------------------------------------------------------------------
-# Navigation
-# ------------------------------------------------------------------------------
-
-# Review Hyprland's bindings file for changes — try to stick with defaults.
-
-#  Many Hyprland dispatchers don't work well in Scrolling mode, for example:
-#  - The right-most window won't grow, even when there is still room to do
-#    so, if the right part of the window is already at the right edge.
-#  - Can't change focus when a window is in full-screen mode (same on
-#    tiling mode).
-#  - Cant' swap windows when they are in full-screen mode.
+  $run ln -s "$src" "$dest"
+}
 
 # ------------------------------------------------------------------------------
-# The Top Bar
+# Bash
 # ------------------------------------------------------------------------------
 
-# Make changes via commands, later you can regenerate default config files to
-# include any new Omarchy defaults and rerun this script to apply these changes
-# on top.
-
-# Remove omarchy icon from bar
-omarchy plugin disable omarchy.menu
-
-# Put the bar on the right
-# omarchy bar position right
-
-# Make it glassy
-omarchy bar background glassy
+#  Symlink specific files
+force_link "$DOTFILES_DIR/bash/.bashrc" "$HOME/.bashrc"
 
 # ------------------------------------------------------------------------------
-# Themes
+# Default browser
 # ------------------------------------------------------------------------------
 
-omarchy theme set "$DEFAULT_THEME"
-
-# ------------------------------------------------------------------------------
-# Background
-# ------------------------------------------------------------------------------
-
-# Include a background called `default.jpg` in theme dotfiles if you want to
-# set a custom background automatically.
-BACKGROUND="$HOME/.config/omarchy/backgrounds/$DEFAULT_THEME/default.jpg"
-if [[ -f "$BACKGROUND" ]]; then
-  omarchy theme bg set "$BACKGROUND"
-fi
-
-# ------------------------------------------------------------------------------
-# Browsers
-# ------------------------------------------------------------------------------
-
-# Setup default browser
 omarchy install browser "$DEFAULT_BROWSER"
 omarchy default browser "$DEFAULT_BROWSER"
 
@@ -92,62 +64,31 @@ omarchy default browser "$DEFAULT_BROWSER"
 case "$DEFAULT_BROWSER" in
 "brave" | "brave-origin")
   sudo mkdir -p "/etc/brave/policies/managed"
-  sudo ln -sf "$dotfiles_dir/.brave/extensions.json" /etc/brave/policies/managed/extensions.json
+  force_link "$DOTFILES_DIR/brave/extensions.json" /etc/brave/policies/managed/extensions.json
   ;;
 esac
 
 # ------------------------------------------------------------------------------
-# Commercial Services
+# Hyprland
 # ------------------------------------------------------------------------------
 
-# Bitwarden
-#   The installer script throws and error message due to conflicting nodejs
-#   installations. Use the browser extension meanwhile.
-
-# Dropbox
-omarchy install service dropbox
-
-# Tailscale
-#   The tailscale omarche shell plugin is pretty cool
-omarchy install service tailscale
+# Replace default files
+#  Do it on a per-file basis, not the whole directory. You can see which files
+#  are sourced in `~/.config/hypr/hyprland.lua`.
+force_link "$DOTFILES_DIR/hypr/autostart.lua" "$HOME/.config/hypr/autostart.lua"
+force_link "$DOTFILES_DIR/hypr/bindings.lua" "$HOME/.config/hypr/bindings.lua"
+force_link "$DOTFILES_DIR/hypr/input.lua" "$HOME/.config/hypr/input.lua"
+force_link "$DOTFILES_DIR/hypr/looknfeel.lua" "$HOME/.config/hypr/looknfeel.lua"
+force_link "$DOTFILES_DIR/hypr/monitors.lua" "$HOME/.config/hypr/monitors.lua"
 
 # ------------------------------------------------------------------------------
-# Web Apps
-# ------------------------------------------------------------------------------
-
-# Remove stuff I never use
-omarchy webapp remove "Hey"
-omarchy webapp remove "Basecamp"
-omarchy webapp remove "ChatGPT"
-omarchy webapp remove "Grok"
-omarchy webapp remove "Google Messages"
-omarchy webapp remove "Google Photos"
-omarchy webapp remove "Google Contacts"
-
-# Install new ones
-#  Only install web apps if you want to open them through the Omarchy menu,
-#  otherwise just set a keybind.
-#
-#  The third argument is required — leave it empty (`""`) to retrieve it from favicon.
-omarchy webapp install "<name>" "<url>" "<icon-url>"
-
-# ------------------------------------------------------------------------------
-# Windows VM
-# ------------------------------------------------------------------------------
-
-# If there is any program you still need for which there is no alternative in
-# Linux, you can run Windows inside Omarchy. The installation is dead-simple
-# through the main menu.
-
-# ------------------------------------------------------------------------------
-# Add other packages
-# ------------------------------------------------------------------------------
-
 # Keyd
+# ------------------------------------------------------------------------------
+
 omarchy pkg add keyd
-if [ ! -d /etc/keyd ]; then
-  sudo ln -sf "$dotfiles_dir/.keyd/default" /etc/keyd
-fi
+
+force_link "$DOTFILES_DIR/keyd" /etc/keyd
+
 if ! systemctl is-enabled --quiet "keyd.service"; then
   sudo systemctl enable "keyd.service"
   echo "Enabled keyd service"
@@ -157,24 +98,85 @@ if ! systemctl is-active --quiet "keyd.service"; then
   echo "Started keyd service"
 fi
 
-# Flea
-omarchy pkg add flea
+# ------------------------------------------------------------------------------
+# Neovim
+# ------------------------------------------------------------------------------
 
+force_link "$DOTFILES_DIR/nvim" "$HOME/.config/nvim"
+
+# ------------------------------------------------------------------------------
+# Omarchy
+# ------------------------------------------------------------------------------
+
+# Set theme
+omarchy theme set "$DEFAULT_THEME"
+
+# Set background
+#  Symlink backgrounds directory
+force_link "$DOTFILES_DIR/omarchy/backgrounds" "$HOME/.config/omarchy/backgrounds"
+#  If you want to set a custom background, include a `default.jpg` for the
+#  desired theme.
+DEFAULT_BACKGROUND="$HOME/.config/omarchy/backgrounds/$DEFAULT_THEME/default.jpg"
+if [[ -f "$DEFAULT_BACKGROUND" ]]; then
+  omarchy theme bg set "$DEFAULT_BACKGROUND"
+fi
+
+# Configure Top Bar
+#  Doing changes with commands (instead of a dotfile) means that you can
+#  recreate default files to include any new upstream changes, and then run the
+#  script to apply our preferences.
+omarchy plugin disable omarchy.menu
+omarchy bar background glassy
+# omarchy bar position right
+
+# Remove some webapps
+omarchy webapp remove "Hey"
+omarchy webapp remove "Basecamp"
+omarchy webapp remove "ChatGPT"
+omarchy webapp remove "Grok"
+omarchy webapp remove "Google Messages"
+omarchy webapp remove "Google Photos"
+omarchy webapp remove "Google Contacts"
+
+# Install webapps
+#  Only install web apps if you want to open them through the Omarchy menu,
+#  otherwise just set a keybind. The third argument is required — leave it
+#  empty (`""`) to retrieve it from favicon.
+# omarchy webapp install "<name>" "<url>" "<icon-url>"
+
+# ------------------------------------------------------------------------------
 # Yazi
+# ------------------------------------------------------------------------------
+
 omarchy pkg add yazi
+force_link "$DOTFILES_DIR/yazi" "$HOME/.config/yazi"
+
+# ------------------------------------------------------------------------------
+# Install packages that don't require config files
+# ------------------------------------------------------------------------------
 
 # Hex
-#  Manually download the "Parakeet v3" model for spanish/english recognition
+#  NOTE: manually download the "Parakeet v3" model for spanish/english recognition
 omarchy pkg aur add hex-bin
 if ! hex status >/dev/null 2>&1; then
   hex start
 fi
 
+# Flea
+omarchy pkg add flea
+
+# Bitwarden
+#  The installer script throws and error message due to conflicting nodejs
+#  installations. Use the browser extension meanwhile.
+
+# Dropbox
+omarchy install service dropbox
+
+# Tailscale
+omarchy install service tailscale
+
 # ------------------------------------------------------------------------------
-# Remove packages
+# Remove some packages
 # ------------------------------------------------------------------------------
 
-# Remove unnecessary packages
 #omarchy pkg drop [package]
-
-exit
