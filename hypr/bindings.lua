@@ -23,8 +23,7 @@ hl.unbind "SUPER + L"
 o.bind("SUPER + b", "Back to last workspace", hl.dsp.focus { workspace = "previous_per_monitor" })
 
 -- Improve the keybind — do not touch app state when doing a window fullscreen
-hl.unbind "SUPER + F"
-o.bind(
+o.rebind(
   "SUPER + F",
   "Full screen (window)",
   hl.dsp.window.fullscreen_state {
@@ -35,8 +34,7 @@ o.bind(
 )
 
 -- Improve the keybind — do not touch window state when doing an app fullscreen
-hl.unbind "SUPER + CTRL + F"
-o.bind(
+o.rebind(
   "SUPER + CTRL + F",
   "Full screen (window content)",
   hl.dsp.window.fullscreen_state {
@@ -55,12 +53,10 @@ o.bind("SUPER + BRACKETLEFT", "Column resize down", hl.dsp.layout "colresize -co
 --------------------------------------------------------------------------------
 
 -- Change keybind — I don't use Hey, so take the keymap for iCloud mail
-hl.unbind "SUPER + SHIFT + E"
-o.bind("SUPER + SHIFT + E", "Email (iCloud)", { webapp = "https://www.icloud.com/mail/" })
+o.rebind("SUPER + SHIFT + E", "Email (iCloud)", { webapp = "https://www.icloud.com/mail/" })
 
 -- Change keybind — I dont use Signal, so take the easier keybind for Whatsapp
-hl.unbind "SUPER + SHIFT + G"
-o.bind("SUPER + SHIFT + G", "WhatsApp", { webapp = "https://web.whatsapp.com/", focus = true })
+o.rebind("SUPER + SHIFT + G", "WhatsApp", { webapp = "https://web.whatsapp.com/", focus = true })
 
 -- New keybind — Hex dictation (use the "Parakeet v3" model for english/spanish)
 o.bind_hold(
@@ -72,9 +68,7 @@ o.bind_hold(
 )
 
 -- Change the keybinds — use Flea instead of Files as the default file manager
-hl.unbind "SUPER + SHIFT + F"
-o.bind("SUPER + SHIFT + F", "File manager", { launch = "flea --gui" })
-hl.unbind "SUPER + ALT + SHIFT + F"
-o.bind("SUPER + ALT + SHIFT + F", "File manager (cwd)", { launch = 'flea --gui "$(omarchy-cmd-terminal-cwd)"' })
+o.rebind("SUPER + SHIFT + F", "File manager", { launch = "flea --gui" })
+o.rebind("SUPER + ALT + SHIFT + F", "File manager (cwd)", { launch = 'flea --gui "$(omarchy-cmd-terminal-cwd)"' })
 -- Make flea the default file picker
 o.window("com.thisisgm.flea.picker", { tag = "+floating-window" })

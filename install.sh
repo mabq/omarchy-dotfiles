@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
+
 set -euo pipefail
+
+# NOTE:
+#  To reset any changes see https://omarchy.org/manual/dotfiles/#resetting-any-changes
 
 # ------------------------------------------------------------------------------
 # Preferences
