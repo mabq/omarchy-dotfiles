@@ -4,8 +4,8 @@ hl.config {
   general = {
     layout = "scrolling",
 
-    -- gaps_out = 6,
-    -- gaps_in = 3,
+    -- gaps_out = 5,
+    -- gaps_in = 4,
   },
 
   decoration = {
@@ -26,22 +26,26 @@ hl.config {
 hl.animation { leaf = "specialWorkspaceIn", enabled = 0 }
 hl.animation { leaf = "specialWorkspaceOut", enabled = 0 }
 
+-- Opt another application in to Omarchy's standard transparency.
+-- Find its class with: hyprctl clients
+-- o.transparent_window("my-app")
+-- o.transparent_window("my-app", "0.9 0.85") -- Custom active/inactive opacity.
+
+-- Application transparency the hyprland way
+-- hl.window_rule {
+--   match = { class = "foot" },
+--   opacity = "0.96 override 0.96 override 0.96 override", -- active inactive fullscreen
+-- }
+
 -- No gaps when there's only one visible tiled window (or a maximized one)
 -- hl.workspace_rule {
 --   workspace = "w[tv1]s[false]",
 --   border_size = 0,
 -- }
 
--- E.g. No border for specic apps
+-- Disable border for a given application
 -- hl.window_rule {
 --   name = "no-brave-border",
 --   match = { class = "brave-browser", float = false },
 --   border_size = 0,
 -- }
-
---
-
--- Opt another application in to Omarchy's standard transparency.
--- Find its class with: hyprctl clients
--- o.transparent_window("my-app")
--- o.transparent_window("my-app", "0.9 0.85") -- Custom active/inactive opacity.

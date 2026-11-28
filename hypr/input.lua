@@ -2,25 +2,28 @@
 hl.config {
   input = {
     -- For keyboard layouts, variants and options read the file
-    -- `/usr/share/X11/xkb/rules/evdev.lst`.
+    --  `/usr/share/X11/xkb/rules/evdev.lst`.
 
-    -- Same layout, two variants — switch with `super + i`
+    -- Same layout, two variants. Use `super + i` to cycle through configured
+    -- input methods.
     kb_layout = "us,us",
     kb_variant = ",intl",
 
     -- Omarchy uses Capslock as the compose key. I prefer to completely disable
-    -- the capslock key, remaping it to Ctrl key with keyd, because when I
-    -- accidentally enable it, it fires other commands in Neovim. Use ralt as
-    -- compose key instead — its available in any keyboard and I also provide
-    -- an easier layered key in keyd.
+    -- the capslock key by remaping it to Ctrl with keyd (accidentally enabling
+    -- capslock can be very confusing in Neovim). Use ralt as compose key
+    -- instead, it is available in any keyboard (I also provide an easier
+    -- keybind with keyd).
     kb_options = "compose:ralt",
 
-    -- Change speed of keyboard repeat.
+    -- Change speed of keyboard repeat
     repeat_rate = 40,
     repeat_delay = 250,
 
-    -- Start with numlock on by default.
+    -- Start with numlock on by default
     numlock_by_default = true,
+
+    -- scroll_factor = 1,
   },
 }
 
