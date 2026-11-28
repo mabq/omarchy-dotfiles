@@ -14,7 +14,7 @@ DOTFILES_DIR="$HOME/dotfiles"
 
 # Default theme — use names like `tokyo-night` instead of `Tokyo Night`.
 #  See `/usr/bin/omarchy-theme-set`
-DEFAULT_THEME="kanagawa"
+DEFAULT_THEME="last-horizon"
 
 # Default browser
 #  See `/usr/bin/omarchy-default-browser`

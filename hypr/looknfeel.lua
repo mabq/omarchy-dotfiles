@@ -32,10 +32,10 @@ hl.animation { leaf = "specialWorkspaceOut", enabled = 0 }
 -- o.transparent_window("my-app", "0.9 0.85") -- Custom active/inactive opacity.
 
 -- Application transparency the hyprland way
--- hl.window_rule {
---   match = { class = "foot" },
---   opacity = "0.96 override 0.96 override 0.96 override", -- active inactive fullscreen
--- }
+hl.window_rule {
+  match = { class = "foot" },
+  opacity = "0.96 override 0.96 override 0.96 override", -- active inactive fullscreen
+}
 
 -- No gaps when there's only one visible tiled window (or a maximized one)
 -- hl.workspace_rule {
